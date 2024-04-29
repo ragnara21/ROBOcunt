@@ -1,0 +1,52 @@
+import os
+import re
+import playsound
+import random
+
+# Define the directory where the sound files are located
+sounds_dir = "C:\\files"
+
+# Create a dictionary to hold the sound files for each state
+state_sounds = {1: [], 2: [], 3: [], 4: []}
+
+# Function to categorize files by state
+def categorize_sounds(directory):
+    # Regular expression to extract state number from file names
+    sound_pattern = re.compile(r"sound(\d)-\d")
+    
+    # List all files in the directory
+    sound_files = os.listdir(directory)
+
+    # Categorize the sound files based on the extracted state number
+    for file in sound_files:
+        # Match the pattern to extract the state number
+        match = sound_pattern.match(file)
+        if match:
+            state_number = int(match.group(1))  # Extract the state number
+            if state_number in state_sounds:
+                # Append the full path of the file to the corresponding state list
+                state_sounds[state_number].append(os.path.join(sounds_dir, file))
+
+# Call the function to categorize the sounds
+categorize_sounds(sounds_dir)
+
+# Function to play a random sound based on the given state
+def play_sound(state):
+    if state not in state_sounds:
+        raise ValueError("Invalid state. Please enter a state between 1 and 4.")
+
+    sounds = state_sounds[state]
+    if not sounds:
+        raise FileNotFoundError(f"No sounds found for state {state}")
+
+    # Choose a random sound from the list for the specified state
+    sound_to_play = random.choice(sounds)
+
+    # Play the sound
+    playsound.playsound(sound_to_play)
+
+# Example usage: Play a sound for state 1
+try:
+    play_sound(1)
+except Exception as e:
+    print("Error:", e)
